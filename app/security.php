@@ -5,6 +5,7 @@ const SESSION_IDLE_LIMIT = 1800;
 const SESSION_ABSOLUTE_LIMIT = 43200;
 const TWO_FACTOR_CHALLENGE_LIMIT = 300;
 
+// Session configuration and expiry enforcement.
 function startSecureSession(): void
 {
     $secureCookie = (
@@ -40,6 +41,7 @@ function startSecureSession(): void
     $_SESSION['_last_activity'] = $now;
 }
 
+// Base32 and RFC 6238 TOTP primitives used by authenticator apps.
 function encodeBase32(string $bytes): string
 {
     $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -118,6 +120,7 @@ function verifyTotpCode(string $secret, string $code, int $lastCounter = -1): ?i
     return null;
 }
 
+// Protect TOTP secrets at rest and provision a stable per-installation key.
 function encryptTotpSecret(string $secret, string $key): string
 {
     $nonce = random_bytes(12);
@@ -208,6 +211,7 @@ function getTotpEncryptionKey(string $driver, string $databasePath): string
     return $key;
 }
 
+// One-time backup codes are random, normalized, and stored as hashes by the caller.
 function createRecoveryCodes(): array
 {
     return array_map(
